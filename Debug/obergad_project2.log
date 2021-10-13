@@ -1,0 +1,6 @@
+﻿  obergad_project2.cpp
+C:\Users\adamm\Documents\Ubuntu\School\cs450\obergad_project2\obergad_project2.cpp(815,8): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\adamm\Documents\Ubuntu\School\cs450\obergad_project2\obergad_project2.cpp(816,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\adamm\Documents\Ubuntu\School\cs450\obergad_project2\obergad_project2.cpp(835,8): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\adamm\Documents\Ubuntu\School\cs450\obergad_project2\obergad_project2.cpp(853,8): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  obergad_project2.vcxproj -> C:\Users\adamm\Documents\Ubuntu\School\cs450\obergad_project2\Debug\obergad_project2.exe
