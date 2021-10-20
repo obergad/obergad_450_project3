@@ -1,6 +1,13 @@
 ﻿  obergad_project2.cpp
-C:\Users\adamm\Documents\Ubuntu\School\cs450\obergad_project2\obergad_project2.cpp(815,8): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\adamm\Documents\Ubuntu\School\cs450\obergad_project2\obergad_project2.cpp(816,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\adamm\Documents\Ubuntu\School\cs450\obergad_project2\obergad_project2.cpp(835,8): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\adamm\Documents\Ubuntu\School\cs450\obergad_project2\obergad_project2.cpp(853,8): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  obergad_project2.vcxproj -> C:\Users\adamm\Documents\Ubuntu\School\cs450\obergad_project2\Debug\obergad_project2.exe
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(298,45): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(437,27): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(864,8): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(865,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(884,8): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(902,8): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(981,14): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(1008,43): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(1010,44): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(1012,45): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\obergad_project2.cpp(1014,44): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  obergad_project2.vcxproj -> C:\Users\Amohawlk\Documents\Ubuntu\Shool\cs450\450-project2\Debug\obergad_project2.exe

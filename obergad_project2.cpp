@@ -15,6 +15,9 @@
 #include <GL/glu.h>
 #include "freeglut.h"
 
+#include "heli.550"
+
+
 
 //	This is a sample OpenGL / GLUT program
 //
@@ -168,6 +171,9 @@ int		ActiveButton;			// current button that is down
 GLuint	AxesList;				// list to hold the axes
 int		AxesOn;					// != 0 means to draw the axes
 GLuint	BoxList;				// object display list
+GLuint CopterList;
+GLuint RoterList;
+GLuint PelletList; 
 int		DebugOn;				// != 0 means to print debugging info
 int		DepthCueOn;				// != 0 means to use intensity depth cueing
 int		DepthBufferOn;			// != 0 means to use the z-buffer
@@ -177,8 +183,13 @@ float	Scale;					// scaling factor
 float	Time;					// timer in the range [0.,1.)
 int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
+int		WhichEye;				// 0 = bird, 1 = pilot
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
+float   RoterAngle;				// Current Angle of the Roter Blades. 
+float	HatScale;				// Scale of the hat in y
+float	PelletPos1;
+float	PelletPos2;
 
 
 // function prototypes:
@@ -270,13 +281,38 @@ Animate()
 {
 	// put animation stuff in here -- change some global variables
 	// for Display( ) to find:
-
 	const int MS_IN_THE_ANIMATION_CYCLE = 10000;	// milliseconds in the animation loop
 	int ms = glutGet(GLUT_ELAPSED_TIME);			// milliseconds since the program started
 	ms %= MS_IN_THE_ANIMATION_CYCLE;				// milliseconds in the range 0 to MS_IN_THE_ANIMATION_CYCLE-1
 	Time = (float)ms / (float)MS_IN_THE_ANIMATION_CYCLE;        // [ 0., 1. )
+	if (RoterAngle >= 360)
+		RoterAngle = 0;
+	else
+		RoterAngle += 33; 
+	/*
+	if (HatScale >= 5)
+		HatScale = 1;
+	else
+		HatScale += .2;
+	*/
+	HatScale = 4 * sin(Time * 12 * (2 * M_PI)) + 5.f; 
+
+	//Pellet movement 
+
+	if (PelletPos1 <= -15)
+		PelletPos1 = 0;
+	else
+		PelletPos1 -= 1;
+
+	if (PelletPos2 <= -15)
+		PelletPos2 = .75;
+	else
+		PelletPos2 -= 1;
 
 	// force a call to Display( ) next time it is convenient:
+
+
+
 
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
@@ -339,20 +375,21 @@ Display()
 	glLoadIdentity();
 
 	// set the eye position, look-at position, and up-vector:
-
-	gluLookAt(0., 0., 3., 0., 0., 0., 0., 1., 0.);
-
-	// rotate the scene:
-
-	glRotatef((GLfloat)Yrot, 0., 1., 0.);
-	glRotatef((GLfloat)Xrot, 1., 0., 0.);
-
-	// uniformly scale the scene:
-
-	if (Scale < MINSCALE)
-		Scale = MINSCALE;
-	glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
-
+	if (WhichEye == 0) {
+		gluLookAt(13., 7., 13., 0., 0., 0., 0., 1., 0.); //birds view
+		// rotate the scene:
+		glRotatef((GLfloat)Yrot, 0., 1., 0.);
+		glRotatef((GLfloat)Xrot, 1., 0., 0.);
+		// uniformly scale the scene:
+		if (Scale < MINSCALE)
+			Scale = MINSCALE;
+		glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
+	}
+	else {
+		gluLookAt(-0.4, 1.8, -4.9, -0.4, 1.8, -10., 0., 1., 0.); //pilot view 
+		glScalef(1., 1., 1.);
+		
+	}
 	// set the fog parameters:
 	// (this is really here to do intensity depth cueing)
 
@@ -382,9 +419,54 @@ Display()
 
 	glEnable(GL_NORMALIZE);
 
-	// draw the current object:
-
+	// draw the Hat
+	glPushMatrix(); 
+	glTranslatef(0., 5.f, -15.f);
+	glRotatef(-90.f, 1., 0., 0.);
+	glRotatef(-90.f, 0., 0., 1.);
+	glScalef(2.f, 2.f, HatScale);
 	glCallList(BoxList);
+	glPopMatrix();  
+
+
+	glCallList(CopterList);
+
+
+
+	glPushMatrix();//Big Roter 
+	glTranslatef(0., 2.9, -2.);
+	glRotatef(90.f, 1.f, 0.f, 0.f);
+	glRotatef(RoterAngle, 0.f, 0.f, 1.f);
+	glScalef(5.f, 1.f, 2.f);
+	glCallList(RoterList);
+	glPopMatrix();
+
+	glPushMatrix();//Small Roter
+	glTranslatef(.5, 2.5, 9.);
+	glRotatef(90.f, 0.f, 1.f, 0.f);
+	glRotatef(RoterAngle * 2, 0.f, 0.f, 1.f);
+	glScalef(3.f, 1.f, 1.5f);
+	glCallList(RoterList);
+	glPopMatrix();
+
+
+
+
+
+	for (float i = 0; i < 5; i++) {
+	glPushMatrix();//Pellets
+	glTranslatef(.25f, -1.f, PelletPos1 - i);
+	glScalef(.25f, 1.f, .25f);
+	glCallList(PelletList);
+	glPopMatrix();
+
+	glPushMatrix();//Pellets
+	glTranslatef(-1.f, -1.f, PelletPos2 - i);
+	glScalef(.25f, 1.f, .25f);
+	glCallList(PelletList);
+	glPopMatrix();
+	}
+
 
 #ifdef DEMO_Z_FIGHTING
 	if (DepthFightingOn != 0)
@@ -524,6 +606,13 @@ DoProjectMenu(int id)
 	glutPostRedisplay();
 }
 
+void DoEyeMenu(int id) {
+
+	WhichEye = id;
+	glutSetWindow(MainWindow);
+	glutPostRedisplay();
+
+}
 
 // use glut to display a string of characters using a raster font:
 
@@ -608,6 +697,10 @@ InitMenus()
 	glutAddMenuEntry("Orthographic", ORTHO);
 	glutAddMenuEntry("Perspective", PERSP);
 
+	int eyemenu = glutCreateMenu(DoEyeMenu);
+	glutAddMenuEntry("Bird's Eye", 0);
+	glutAddMenuEntry("Pilot's Eye", 1);
+
 	int mainmenu = glutCreateMenu(DoMainMenu);
 	glutAddSubMenu("Axes", axesmenu);
 	glutAddSubMenu("Colors", colormenu);
@@ -622,6 +715,7 @@ InitMenus()
 
 	glutAddSubMenu("Depth Cue", depthcuemenu);
 	glutAddSubMenu("Projection", projmenu);
+	glutAddSubMenu("Eye View", eyemenu);
 	glutAddMenuEntry("Reset", RESET);
 	glutAddSubMenu("Debug", debugmenu);
 	glutAddMenuEntry("Quit", QUIT);
@@ -699,7 +793,7 @@ InitGraphics()
 	glutTabletButtonFunc(NULL);
 	glutMenuStateFunc(NULL);
 	glutTimerFunc(-1, NULL, 0);
-	glutIdleFunc(NULL);
+	glutIdleFunc(Animate);
 
 	// init glew (a window must be open to do this):
 
@@ -721,60 +815,15 @@ InitGraphics()
 //  memory so that they can be played back efficiently at a later time
 //  with a call to glCallList( )
 
-void
-InitLists()
-{
-	float dx = BOXSIZE / 2.f;
-	float dy = BOXSIZE / 2.f;
-	float dz = BOXSIZE / 2.f;
+void CreateHat() {
 	float r = BOXSIZE / 2.f;
 	float base = -1;
 	float z = BOXSIZE + base;
-	int num_segments = 20;
-	glutSetWindow(MainWindow);
-
+	int num_segments = 16;
 	// create the object:
 
-	BoxList = glGenLists(1);
-	glNewList(BoxList, GL_COMPILE);
-	/*
-	glBegin(GL_TRIANGLE_STRIP);
 
-				glColor3f( 0., 0., 1. );
-				glVertex3f( -dx, -dy,  dz );
-				glVertex3f(  dx, -dy,  dz);
-				glVertex3f(  dx,  dy,  dz);
-
-				glColor3f(1., 0., 0.);
-				glVertex3f(dx, dy, -dz);
-
-				glColor3f(0., 1., 0.);
-				glVertex3f(-dx, -dy, dz);
-
-				glColor3f(1., 1., 0.);
-				glVertex3f(dx, -dy, dz);
-				glEnd();
-				*//*
-				float NUMSEGS = 40;
-				float RADIUS = 1;
-				glColor3f(1., 1., 1.);
-				float dang = 2. * M_PI / (float)(NUMSEGS);
-				float ang = 0.;
-				for (int j = 0; j < 1; j+= .01) {
-					glBegin(GL_LINE_STRIP);
-
-					for (int i = 0; i < NUMSEGS; i++)
-					{
-
-						glColor3f(0., 1., 0.);
-						glVertex3f(RADIUS * cos(ang), -RADIUS * sin(ang), float(j));
-
-
-						ang += dang;
-					}
-					glEnd();
-				} */
-
+	//==========================================HAT=============================================================
 
 	glBegin(GL_QUADS);
 	glColor3f(1., 1., 1.);
@@ -896,7 +945,113 @@ InitLists()
 
 	}
 	glEnd();
+	//=======================================END HAT=============================================================
+
+}
+void CreateCopter() {
+
+	//=======================================HELOCOPERT==========================================================
+
+	int i;
+	struct point* p0, * p1, * p2;
+	struct tri* tp;
+	float p01[3], p02[3], n[3];
+
+	glPushMatrix();
+	glTranslatef(0., -1., 0.);
+	glRotatef(97., 0., 1., 0.);
+	glRotatef(-15., 0., 0., 1.);
+	glBegin(GL_TRIANGLES);
+	for (i = 0, tp = Helitris; i < Helintris; i++, tp++)
+	{
+		p0 = &Helipoints[tp->p0];
+		p1 = &Helipoints[tp->p1];
+		p2 = &Helipoints[tp->p2];
+
+		// fake "lighting" from above:
+
+		p01[0] = p1->x - p0->x;
+		p01[1] = p1->y - p0->y;
+		p01[2] = p1->z - p0->z;
+		p02[0] = p2->x - p0->x;
+		p02[1] = p2->y - p0->y;
+		p02[2] = p2->z - p0->z;
+		Cross(p01, p02, n);
+		Unit(n, n);
+		n[1] = fabs(n[1]);
+		n[1] += .25;
+		if (n[1] > 1.)
+			n[1] = 1.;
+		glColor3f(0., n[1], 0.);
+
+		glVertex3f(p0->x, p0->y, p0->z);
+		glVertex3f(p1->x, p1->y, p1->z);
+		glVertex3f(p2->x, p2->y, p2->z);
+	}
+	glEnd();
+	glPopMatrix();
+	//=======================================END HELOCOPERT======================================================
+}
+
+void 	CreateRoter() {
+	// blade parameters:
+	
+	#define BLADE_RADIUS	 1.0
+	#define BLADE_WIDTH		 0.4
+
+	// draw the helicopter blade with radius BLADE_RADIUS and
+	//	width BLADE_WIDTH centered at (0.,0.,0.) in the XY plane
+
+	glBegin(GL_TRIANGLES);
+	glColor3f(1., 1., 1.);
+
+	glVertex2f(BLADE_RADIUS, BLADE_WIDTH / 2.);
+	glVertex2f(0., 0.);
+	glVertex2f(BLADE_RADIUS, -BLADE_WIDTH / 2.);
+
+	glVertex2f(-BLADE_RADIUS, -BLADE_WIDTH / 2.);
+	glVertex2f(0., 0.);
+	glVertex2f(-BLADE_RADIUS, BLADE_WIDTH / 2.);
+	glEnd();
+
+
+}
+
+void CreatePellets() {
+	glBegin(GL_QUADS); 
+	glColor3f(1., 1., 1.);
+	glVertex3f(0.f, 0.f, 0.f);
+	glVertex3f(0.f, 0.f, 1.f);
+	glVertex3f(1.f,0.f, 1.f);
+	glVertex3f(1.f, 0.f, 0.f);
+	glEnd();
+
+}
+void
+InitLists()
+{
+	
+	glutSetWindow(MainWindow);
+	BoxList = glGenLists(1);
+	glNewList(BoxList, GL_COMPILE);
+	CreateHat();
 	glEndList();
+
+	CopterList = glGenLists(1);
+	glNewList(CopterList, GL_COMPILE);
+	CreateCopter();
+	glEndList();
+
+	RoterList = glGenLists(1);
+	glNewList(RoterList, GL_COMPILE);
+	CreateRoter();
+	glEndList();
+	
+	PelletList = glGenLists(1);
+	glNewList(PelletList, GL_COMPILE);
+	CreatePellets();
+	glEndList();
+
 
 	// create the axes:
 	/*
@@ -1059,6 +1214,7 @@ Reset()
 	Scale = 1.0;
 	WhichColor = WHITE;
 	WhichProjection = PERSP;
+	WhichEye = 0; 
 	Xrot = Yrot = 0.;
 }
 
